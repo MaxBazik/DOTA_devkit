@@ -238,19 +238,28 @@ def voc_eval(detpath,
 
 def main():
 
+    print ("starting dota_evaluation_task1 ...")
     # ##TODO: wrap the code in the main
     # detpath = r'/home/dingjian/evaluation_task1/result/faster-rcnn-59/comp4_testnms_c_extension_0.1/comp4_det_test_{:s}.txt'
     # annopath = r'/home/dingjian/evaluation_task1/testset/wordlabel-utf-8/{:s}.txt'
     # imagesetfile = r'/home/dingjian/evaluation_task1/testset/testset.txt'
     # classnames = ['plane', 'baseball-diamond', 'bridge', 'ground-track-field', 'small-vehicle', 'large-vehicle', 'ship', 'tennis-court',
     #             'basketball-court', 'storage-tank',  'soccer-ball-field', 'turntable', 'harbor', 'swimming-pool', 'helicopter']
+    import sys
+    detections = sys.argv[1]
+    gt = sys.argv[2]
+    imagesetfile = sys.argv[3]
 
-    detpath = r'PATH_TO_BE_CONFIGURED/Task1_{:s}.txt'
-    annopath = r'PATH_TO_BE_CONFIGURED/{:s}.txt' # change the directory to the path of val/labelTxt, if you want to do evaluation on the valset
-    imagesetfile = r'PATH_TO_BE_CONFIGURED/valset.txt'
+
+    detpath = detections+'/{:s}.txt'
+    annopath = gt+'/{:s}.txt' # change the directory to the path of val/labelTxt, if you want to do evaluation on the valset
+    imagesetfile = imagesetfile + ".txt"
 
     classnames = ['plane', 'baseball-diamond', 'bridge', 'ground-track-field', 'small-vehicle', 'large-vehicle', 'ship', 'tennis-court',
                 'basketball-court', 'storage-tank',  'soccer-ball-field', 'roundabout', 'harbor', 'swimming-pool', 'helicopter']
+
+    cc = [c for c in classnames if os.stat(detpath.format(c)).st_size]
+    classnames = cc
 
     classaps = []
     map = 0
@@ -277,5 +286,9 @@ def main():
     print('map:', map)
     classaps = 100*np.array(classaps)
     print('classaps: ', classaps)
+    r = dict(zip(classnames, classaps))
+    import json
+    save_json = sys.argv[4]
+    json.dump(r, open(save_json, "w"))
 if __name__ == '__main__':
     main()

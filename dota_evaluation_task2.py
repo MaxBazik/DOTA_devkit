@@ -177,7 +177,6 @@ def voc_eval(detpath,
         bb = BB[d, :].astype(float)
         ovmax = -np.inf
         BBGT = R['bbox'].astype(float)
-
         if BBGT.size > 0:
             # compute overlaps
             # intersection
@@ -229,16 +228,30 @@ def voc_eval(detpath,
     return rec, prec, ap
 
 def main():
-    # detpath = r'E:\documentation\OneDrive\documentation\DotaEvaluation\evluation_task2\evluation_task2\faster-rcnn-nms_0.3_task2\nms_0.3_task\Task2_{:s}.txt'
-    # annopath = r'I:\dota\testset\ReclabelTxt-utf-8\{:s}.txt'
-    # imagesetfile = r'I:\dota\testset\va.txt'
 
-    detpath = r'PATH_TO_BE_CONFIGURED/Task1_{:s}.txt'
-    annopath = r'PATH_TO_BE_CONFIGURED/{:s}.txt'# change the directory to the path of val/labelTxt, if you want to do evaluation on the valset
-    imagesetfile = r'PATH_TO_BE_CONFIGURED/valset.txt'
+    print ("starting dota_evaluation_task2 ...")
+    # ##TODO: wrap the code in the main
+    # detpath = r'/home/dingjian/evaluation_task1/result/faster-rcnn-59/comp4_testnms_c_extension_0.1/comp4_det_test_{:s}.txt'
+    # annopath = r'/home/dingjian/evaluation_task1/testset/wordlabel-utf-8/{:s}.txt'
+    # imagesetfile = r'/home/dingjian/evaluation_task1/testset/testset.txt'
+    # classnames = ['plane', 'baseball-diamond', 'bridge', 'ground-track-field', 'small-vehicle', 'large-vehicle', 'ship', 'tennis-court',
+    #             'basketball-court', 'storage-tank',  'soccer-ball-field', 'turntable', 'harbor', 'swimming-pool', 'helicopter']
+    import sys
+    detections = sys.argv[1]
+    gt = sys.argv[2]
+    imagesetfile = sys.argv[3]
+
+
+    detpath = detections+'/{:s}.txt'
+    annopath = gt+'/{:s}.txt' # change the directory to the path of val/labelTxt, if you want to do evaluation on the valset
+    imagesetfile = imagesetfile + ".txt"
 
     classnames = ['plane', 'baseball-diamond', 'bridge', 'ground-track-field', 'small-vehicle', 'large-vehicle', 'ship', 'tennis-court',
                 'basketball-court', 'storage-tank',  'soccer-ball-field', 'roundabout', 'harbor', 'swimming-pool', 'helicopter']
+
+    cc = [c for c in classnames if os.stat(detpath.format(c)).st_size]
+    classnames = cc
+
     classaps = []
     map = 0
     for classname in classnames:
@@ -254,15 +267,19 @@ def main():
         print('ap: ', ap)
         classaps.append(ap)
 
-        ## uncomment to plot p-r curve for each category
+        # umcomment to show p-r curve of each category
         # plt.figure(figsize=(8,4))
         # plt.xlabel('recall')
         # plt.ylabel('precision')
         # plt.plot(rec, prec)
-        # plt.show()
+       # plt.show()
     map = map/len(classnames)
     print('map:', map)
     classaps = 100*np.array(classaps)
     print('classaps: ', classaps)
+    r = dict(zip(classnames, classaps))
+    import json
+    save_json = sys.argv[4]
+    json.dump(r, open(save_json, "w"))
 if __name__ == '__main__':
     main()
