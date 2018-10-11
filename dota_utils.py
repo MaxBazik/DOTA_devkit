@@ -153,13 +153,7 @@ def groundtruth2Task1(srcpath, dstpath):
             poly = obj['poly']
             if difficult == '2':
                 continue
-            if rate == '0.5':
-                outline = custombasename(filepath) + ' ' + difficult + ' ' + ' '.join(map(str, poly))
-            elif rate == '1':
-                outline = custombasename(filepath) + ' ' + difficult + ' ' + ' '.join(map(str, poly))
-            else:
-                outline = custombasename(filepath) + ' ' + difficult + ' ' + ' '.join(map(str, poly))
-
+            outline = custombasename(filepath) + ' ' + difficult + ' ' + ' '.join(map(str, poly))
             filedict[category].write(outline + '\n')
 
 def Task2groundtruth_poly(srcpath, dstpath):
